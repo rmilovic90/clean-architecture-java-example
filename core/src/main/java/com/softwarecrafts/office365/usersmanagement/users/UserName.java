@@ -1,28 +1,26 @@
 package com.softwarecrafts.office365.usersmanagement.users;
 
+import com.softwarecrafts.office365.usersmanagement.common.ValueObject;
+
 import java.util.Objects;
 
-public final class UserName {
+public final class UserName extends ValueObject<UserName> {
 	private final String value;
 
-	public UserName(String value) {
-		if (value.trim().isEmpty())
+	UserName(String value) {
+		if (value == null || value.trim().isEmpty())
 			throw new IllegalArgumentException("User name's value must not be empty.");
 
 		this.value = value;
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		UserName that = (UserName) o;
-		return value.equalsIgnoreCase(that.value);
+	protected boolean equalsCore(UserName otherValueObject) {
+		return value.equalsIgnoreCase(otherValueObject.value);
 	}
 
 	@Override
-	public int hashCode() {
+	protected int hashCodeCore() {
 		return Objects.hash(value.toLowerCase());
 	}
 
@@ -31,3 +29,4 @@ public final class UserName {
 		return value;
 	}
 }
+

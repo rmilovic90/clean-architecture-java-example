@@ -1,28 +1,26 @@
 package com.softwarecrafts.office365.usersmanagement.customers;
 
+import com.softwarecrafts.office365.usersmanagement.common.ValueObject;
+
 import java.util.Objects;
 
-public final class CustomerCspId {
+public final class CustomerCspId extends ValueObject<CustomerCspId> {
 	private final String value;
 
 	public CustomerCspId(String value) {
-		if (value.trim().isEmpty())
+		if (value == null || value.trim().isEmpty())
 			throw new IllegalArgumentException("Customer CSP ID's value must not be empty.");
 
 		this.value = value;
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		CustomerCspId that = (CustomerCspId) o;
-		return value.equalsIgnoreCase(that.value);
+	protected boolean equalsCore(CustomerCspId otherValueObject) {
+		return value.equalsIgnoreCase(otherValueObject.value);
 	}
 
 	@Override
-	public int hashCode() {
+	protected int hashCodeCore() {
 		return Objects.hash(value.toLowerCase());
 	}
 

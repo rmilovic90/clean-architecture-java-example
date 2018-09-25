@@ -2,11 +2,11 @@ package com.softwarecrafts.office365.usersmanagement.users;
 
 import com.softwarecrafts.office365.usersmanagement.customers.CustomerNumber;
 
-public class DeleteUserRequest {
+class DeleteUserRequest {
 	private final CustomerNumber customerNumber;
 	private final UserName customersUserName;
 
-	public DeleteUserRequest(CustomerNumber customerNumber, UserName customersUserName) {
+	DeleteUserRequest(CustomerNumber customerNumber, UserName customersUserName) {
 		if (customerNumber == null)
 			throw new IllegalArgumentException("Customer's number can't be null.");
 		if (customersUserName == null)
@@ -14,5 +14,13 @@ public class DeleteUserRequest {
 
 		this.customerNumber = customerNumber;
 		this.customersUserName = customersUserName;
+	}
+
+	CustomerNumber customerNumber() {
+		return customerNumber;
+	}
+
+	UserName customersUserName() {
+		return customersUserName;
 	}
 }

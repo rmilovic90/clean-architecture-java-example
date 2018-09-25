@@ -1,7 +1,5 @@
 package com.softwarecrafts.office365.usersmanagement.customers;
 
-import java.util.Objects;
-
 public class Customer {
 	private final CustomerNumber number;
 	private final CustomerCspId cspId;
@@ -16,18 +14,8 @@ public class Customer {
 		this.cspId = cspId;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		Customer customer = (Customer) o;
-		return Objects.equals(number, customer.number);
-	}
-
-	@Override
-	public int hashCode() {
-		return number.hashCode();
+	public CustomerCspId cspId() {
+		return cspId;
 	}
 
 	@Override

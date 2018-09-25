@@ -1,29 +1,27 @@
 package com.softwarecrafts.office365.usersmanagement.customers;
 
+import com.softwarecrafts.office365.usersmanagement.common.ValueObject;
+
 import java.util.Objects;
 
-public final class CustomerNumber {
+public final class CustomerNumber extends ValueObject<CustomerNumber> {
 	private final String value;
 
 	public CustomerNumber(String value) {
-		if (value.trim().isEmpty())
+		if (value == null || value.trim().isEmpty())
 			throw new IllegalArgumentException("Customer number's value must not be empty.");
 
 		this.value = value;
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		CustomerNumber that = (CustomerNumber) o;
-		return value.equalsIgnoreCase(that.value);
+	protected boolean equalsCore(CustomerNumber otherValueObject) {
+		return Objects.equals(value, otherValueObject.value);
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(value.toLowerCase());
+	protected int hashCodeCore() {
+		return Objects.hash(value);
 	}
 
 	@Override

@@ -17,9 +17,9 @@ import static com.softwarecrafts.office365.usersmanagement.users.CustomerBuilder
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@Tag("Acceptance Test")
+@Tag("Acceptance-Test")
 @ExtendWith(MockitoExtension.class)
-public class DeletingLicensedUserTests {
+class DeletingLicensedUserTests {
 	static final String A_CUSTOMER_NUMBER = "2105";
 	static final String A_CUSTOMER_CSP_ID = "0c07c0ff-cf08-40e4-a2a3-da2b80706811";
 	static final String A_CUSTOMER_USER = "testuser@testcustomer.onmicrosoft.com";
@@ -34,7 +34,7 @@ public class DeletingLicensedUserTests {
 	UsersOperations usersOperations;
 
 	@Test
-	public void deletesTheUser() {
+	void deletesTheUser() {
 		when(customersStore.tryFindOneBy(aCustomerNumberOf(A_CUSTOMER_NUMBER)))
 			.thenReturn(aCustomerWith(A_CUSTOMER_NUMBER, A_CUSTOMER_CSP_ID));
 

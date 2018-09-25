@@ -5,7 +5,7 @@ import com.softwarecrafts.office365.usersmanagement.customers.CustomerCspId;
 import com.softwarecrafts.office365.usersmanagement.customers.CustomerNumber;
 
 final class CustomerBuilder {
-	public static CustomerBuilder aCustomer() {
+	static CustomerBuilder aCustomer() {
 		return new CustomerBuilder();
 	}
 
@@ -14,19 +14,19 @@ final class CustomerBuilder {
 
 	private CustomerBuilder() {}
 
-	public CustomerBuilder withNumber(String number) {
+	CustomerBuilder withNumber(String number) {
 		this.number = new CustomerNumber(number);
 
 		return this;
 	}
 
-	public CustomerBuilder withCspId(String cspId) {
+	CustomerBuilder withCspId(String cspId) {
 		this.cspId = new CustomerCspId(cspId);
 
 		return this;
 	}
 
-	public Customer build() {
+	Customer build() {
 		return new Customer(number, cspId);
 	}
 }

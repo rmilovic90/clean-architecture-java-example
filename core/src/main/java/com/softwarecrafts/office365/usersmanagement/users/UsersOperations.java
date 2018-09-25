@@ -11,5 +11,9 @@ public class UsersOperations {
 		this.office365UsersOperations = office365UsersOperations;
 	}
 
-	public void deleteUser(DeleteUserRequest request) {}
+	void deleteUser(DeleteUserRequest request) {
+		var customer = customersStore.tryFindOneBy(request.customerNumber());
+
+		office365UsersOperations.deleteOne(customer.get().cspId(), request.customersUserName());
+	}
 }
