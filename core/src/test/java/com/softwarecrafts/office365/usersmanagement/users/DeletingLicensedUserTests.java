@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import static com.softwarecrafts.office365.usersmanagement.users.CspSubscriptionBuilder.aCspSubscription;
 import static com.softwarecrafts.office365.usersmanagement.users.CustomerBuilder.aCustomer;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @Tag("Acceptance-Test")
@@ -58,10 +59,10 @@ class DeletingLicensedUserTests {
 		when(customersStore.tryFindOneBy(aCustomerNumberOf(A_CUSTOMER_NUMBER)))
 			.thenReturn(aCustomerWith(A_CUSTOMER_CSP_ID, CustomerLicensingMode.AUTOMATIC));
 
-		when(office365UsersOperations.getAssignedSubscriptionIdsFor(aCustomerCspIdOf(A_CUSTOMER_NUMBER), aUserNameOf(A_CUSTOMER_USER)))
+		when(office365UsersOperations.getAssignedSubscriptionIdsFor(aCustomerCspIdOf(A_CUSTOMER_CSP_ID), aUserNameOf(A_CUSTOMER_USER)))
 			.thenReturn(subscriptionCspIdsOf(A_CUSTOMER_SUBSCRIPTION_CSP_ID));
 
-		when(office365SubscriptionsOperations.getAllFor(aCustomerCspIdOf(A_CUSTOMER_SUBSCRIPTION_CSP_ID)))
+		when(office365SubscriptionsOperations.getAllFor(aCustomerCspIdOf(A_CUSTOMER_CSP_ID)))
 			.thenReturn(cspSubscriptionsOf(
 				aCspSubscription()
 					.withId("7a423c76-e8d9-4818-9e3c-7bc69c7417dd"),
@@ -74,7 +75,8 @@ class DeletingLicensedUserTests {
 
 		verify(office365SubscriptionsOperations)
 			.changeSubscriptionQuantity(aCustomerCspIdOf(A_CUSTOMER_CSP_ID),
-				aSubscriptionCspIdOf(A_CUSTOMER_SUBSCRIPTION_CSP_ID), aSubscriptionLicenseQuantityOf(1));
+				aSubscriptionCspIdOf(A_CUSTOMER_SUBSCRIPTION_CSP_ID), aSubscriptionLicenseQuantityOf(2));
+		verifyNoMoreInteractions(office365SubscriptionsOperations);
 	}
 
 	private CustomerNumber aCustomerNumberOf(String value) {
