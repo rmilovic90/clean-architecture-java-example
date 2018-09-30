@@ -1,10 +1,7 @@
 package com.softwarecrafts.office365.usersmanagement.users;
 
 import com.softwarecrafts.office365.usersmanagement.customers.*;
-import com.softwarecrafts.office365.usersmanagement.subscriptions.CspSubscription;
 import com.softwarecrafts.office365.usersmanagement.subscriptions.IOperateOnOffice365Subscriptions;
-import com.softwarecrafts.office365.usersmanagement.subscriptions.SubscriptionCspId;
-import com.softwarecrafts.office365.usersmanagement.subscriptions.SubscriptionLicenseQuantity;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,16 +9,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static com.softwarecrafts.office365.usersmanagement.users.CspSubscriptionBuilder.aCspSubscription;
+import static com.softwarecrafts.office365.usersmanagement.common.CspSubscriptionBuilder.aCspSubscription;
+import static com.softwarecrafts.office365.usersmanagement.common.CspSubscriptionsBuilder.cspSubscriptionsOf;
+import static com.softwarecrafts.office365.usersmanagement.common.CspSubscriptionsBuilder.emptyCspSubscriptions;
+import static com.softwarecrafts.office365.usersmanagement.common.SubscriptionCspIdBuilder.aSubscriptionCspIdOf;
+import static com.softwarecrafts.office365.usersmanagement.common.SubscriptionCspIdBuilder.subscriptionCspIdsOf;
+import static com.softwarecrafts.office365.usersmanagement.common.SubscriptionLicenseQuantityBuilder.aSubscriptionLicenseQuantityOf;
 import static com.softwarecrafts.office365.usersmanagement.users.CustomerBuilder.aCustomer;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Tag("Acceptance-Test")
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +44,9 @@ class DeletingLicensedUserTests {
 	void deletesTheUser() {
 		when(customersStore.tryFindOneBy(aCustomerNumberOf(A_CUSTOMER_NUMBER)))
 			.thenReturn(aCustomerWith(A_CUSTOMER_CSP_ID));
+
+		when(office365SubscriptionsOperations.getAllFor(aCustomerCspIdOf(A_CUSTOMER_CSP_ID)))
+			.thenReturn(emptyCspSubscriptions());
 
 		usersOperations.deleteUser(deleteUserRequestFor(A_CUSTOMER_NUMBER, A_CUSTOMER_USER));
 
@@ -90,12 +90,12 @@ class DeletingLicensedUserTests {
 				.build());
 	}
 
-	private DeleteUserRequest deleteUserRequestFor(String customerNumber, String customersUser) {
-		return new DeleteUserRequest(new CustomerNumber(customerNumber), new UserName(customersUser));
-	}
-
 	private CustomerCspId aCustomerCspIdOf(String value) {
 		return new CustomerCspId(value);
+	}
+
+	private DeleteUserRequest deleteUserRequestFor(String customerNumber, String customersUser) {
+		return new DeleteUserRequest(new CustomerNumber(customerNumber), new UserName(customersUser));
 	}
 
 	private UserName aUserNameOf(String value) {
@@ -108,23 +108,5 @@ class DeletingLicensedUserTests {
 				.withCspId(cspId)
 				.withLicensingMode(licensingMode)
 				.build());
-	}
-
-	private List<SubscriptionCspId> subscriptionCspIdsOf(String... subscriptionIds) {
-		return Arrays.stream(subscriptionIds).map(SubscriptionCspId::new)
-			.collect(Collectors.toList());
-	}
-
-	private List<CspSubscription> cspSubscriptionsOf(CspSubscriptionBuilder... cspSubscriptions) {
-		return Arrays.stream(cspSubscriptions).map(CspSubscriptionBuilder::build)
-			.collect(Collectors.toList());
-	}
-
-	private SubscriptionCspId aSubscriptionCspIdOf(String value) {
-		return new SubscriptionCspId(value);
-	}
-
-	private SubscriptionLicenseQuantity aSubscriptionLicenseQuantityOf(int value) {
-		return new SubscriptionLicenseQuantity(value);
 	}
 }

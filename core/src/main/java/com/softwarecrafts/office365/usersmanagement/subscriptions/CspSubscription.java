@@ -28,6 +28,11 @@ public class CspSubscription {
 		this.maxAllowedNumberOfAvailableLicenses = maxAllowedNumberOfAvailableLicenses;
 	}
 
+	CspSubscription withAvailableLicensesOf(SubscriptionLicenseQuantity quantity) {
+		return new CspSubscription(id, quantity, numberOfAssignedLicenses, minAllowedNumberOfAvailableLicenses,
+			maxAllowedNumberOfAvailableLicenses);
+	}
+
 	public SubscriptionCspId id() {
 		return id;
 	}
@@ -38,14 +43,6 @@ public class CspSubscription {
 
 	public SubscriptionLicenseQuantity numberOfAssignedLicenses() {
 		return numberOfAssignedLicenses;
-	}
-
-	public SubscriptionLicenseQuantity minAllowedNumberOfAvailableLicenses() {
-		return minAllowedNumberOfAvailableLicenses;
-	}
-
-	public SubscriptionLicenseQuantity maxAllowedNumberOfAvailableLicenses() {
-		return maxAllowedNumberOfAvailableLicenses;
 	}
 
 	@Override

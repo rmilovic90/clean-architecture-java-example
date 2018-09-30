@@ -1,11 +1,11 @@
-package com.softwarecrafts.office365.usersmanagement.users;
+package com.softwarecrafts.office365.usersmanagement.common;
 
 import com.softwarecrafts.office365.usersmanagement.subscriptions.CspSubscription;
 import com.softwarecrafts.office365.usersmanagement.subscriptions.SubscriptionCspId;
 import com.softwarecrafts.office365.usersmanagement.subscriptions.SubscriptionLicenseQuantity;
 
-final class CspSubscriptionBuilder {
-	static CspSubscriptionBuilder aCspSubscription() {
+public final class CspSubscriptionBuilder {
+	public static CspSubscriptionBuilder aCspSubscription() {
 		return new CspSubscriptionBuilder();
 	}
 
@@ -17,19 +17,19 @@ final class CspSubscriptionBuilder {
 
 	private CspSubscriptionBuilder() {}
 
-	CspSubscriptionBuilder withId(String id) {
+	public CspSubscriptionBuilder withId(String id) {
 		this.id = new SubscriptionCspId(id);
 
 		return this;
 	}
 
-	CspSubscriptionBuilder withAvailableLicenses(int quantity) {
+	public CspSubscriptionBuilder withAvailableLicenses(int quantity) {
 		numberOfAvailableLicenses = new SubscriptionLicenseQuantity(quantity);
 
 		return this;
 	}
 
-	CspSubscriptionBuilder withAssignedLicenses(int quantity) {
+	public CspSubscriptionBuilder withAssignedLicenses(int quantity) {
 		numberOfAssignedLicenses = new SubscriptionLicenseQuantity(quantity);
 
 		return this;

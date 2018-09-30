@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Tag("Unit-Test")
-class SubscriptionCspIdTest {
+class SubscriptionCspIdTests {
 	@ParameterizedTest
 	@MethodSource("valueProvider")
 	void cannotHaveEmptyValue(String value) {

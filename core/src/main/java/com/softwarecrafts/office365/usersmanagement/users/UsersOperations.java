@@ -1,8 +1,15 @@
 package com.softwarecrafts.office365.usersmanagement.users;
 
+import com.softwarecrafts.office365.usersmanagement.customers.CustomerCspId;
+import com.softwarecrafts.office365.usersmanagement.customers.CustomerNumber;
 import com.softwarecrafts.office365.usersmanagement.customers.IStoreCustomers;
 import com.softwarecrafts.office365.usersmanagement.subscriptions.CspSubscription;
 import com.softwarecrafts.office365.usersmanagement.subscriptions.IOperateOnOffice365Subscriptions;
+import com.softwarecrafts.office365.usersmanagement.subscriptions.SubscriptionLicenseQuantity;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class UsersOperations {
 	private final IStoreCustomers customersStore;
@@ -18,20 +25,30 @@ public class UsersOperations {
 
 	void deleteUser(DeleteUserRequest request) {
 		var customer = customersStore.tryFindOneBy(request.customerNumber());
+		var customersCspId = customer.orElseThrow(customerDoesNotExist(request.customerNumber())).cspId();
 
 		var idsOfTheAffectedSubscriptions = office365UsersOperations.getAssignedSubscriptionIdsFor(
-			customer.get().cspId(), request.customersUserName());
+			customersCspId, request.customersUserName());
 
-		office365UsersOperations.deleteOne(customer.get().cspId(), request.customersUserName());
+		office365UsersOperations.deleteOne(customersCspId, request.customersUserName());
 
-		var customersSubscriptions = office365SubscriptionsOperations.getAllFor(customer.get().cspId());
+		var customersSubscriptions = office365SubscriptionsOperations.getAllFor(customersCspId);
 
-		customersSubscriptions.stream()
-			.filter(subscription -> idsOfTheAffectedSubscriptions.contains(subscription.id()))
-			.map(subscription -> new CspSubscription(subscription.id(), subscription.numberOfAssignedLicenses(),
-				subscription.numberOfAssignedLicenses(), subscription.minAllowedNumberOfAvailableLicenses(),
-				subscription.maxAllowedNumberOfAvailableLicenses()))
-			.forEach(subscription -> office365SubscriptionsOperations.changeSubscriptionQuantity(
-				customer.get().cspId(), subscription.id(), subscription.numberOfAvailableLicenses()));
+		customersSubscriptions.onlyWithIdsOf(idsOfTheAffectedSubscriptions)
+			.modifyNumberOfAvailableLicensesUsing(alignmentWithAssignedLicenses())
+			.items().forEach(changeSubscriptionQuantityFor(customersCspId));
+	}
+
+	private Supplier<IllegalStateException> customerDoesNotExist(CustomerNumber customerNumber) {
+		return () -> new IllegalStateException(String.format("Customer with number %s does not exist.", customerNumber));
+	}
+
+	private Function<CspSubscription, SubscriptionLicenseQuantity> alignmentWithAssignedLicenses() {
+		return CspSubscription::numberOfAssignedLicenses;
+	}
+
+	private Consumer<CspSubscription> changeSubscriptionQuantityFor(CustomerCspId customerId) {
+		return subscription -> office365SubscriptionsOperations.changeSubscriptionQuantity(
+			customerId, subscription.id(), subscription.numberOfAvailableLicenses());
 	}
 }
