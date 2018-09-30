@@ -28,6 +28,26 @@ public class CspSubscription {
 		this.maxAllowedNumberOfAvailableLicenses = maxAllowedNumberOfAvailableLicenses;
 	}
 
+	public SubscriptionCspId id() {
+		return id;
+	}
+
+	public SubscriptionLicenseQuantity numberOfAvailableLicenses() {
+		return numberOfAvailableLicenses;
+	}
+
+	public SubscriptionLicenseQuantity numberOfAssignedLicenses() {
+		return numberOfAssignedLicenses;
+	}
+
+	public SubscriptionLicenseQuantity minAllowedNumberOfAvailableLicenses() {
+		return minAllowedNumberOfAvailableLicenses;
+	}
+
+	public SubscriptionLicenseQuantity maxAllowedNumberOfAvailableLicenses() {
+		return maxAllowedNumberOfAvailableLicenses;
+	}
+
 	@Override
 	public String toString() {
 		return "CspSubscription {" +
