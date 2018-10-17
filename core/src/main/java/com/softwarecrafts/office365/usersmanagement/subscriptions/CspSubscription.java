@@ -1,5 +1,7 @@
 package com.softwarecrafts.office365.usersmanagement.subscriptions;
 
+import java.util.Optional;
+
 public class CspSubscription {
 	private final SubscriptionCspId id;
 	private final SubscriptionLicenseQuantity numberOfAvailableLicenses;
@@ -36,15 +38,33 @@ public class CspSubscription {
 		return numberOfAvailableLicenses;
 	}
 
-	CspSubscription alignNumberOfAvailableLicenses() {
-		return withAvailableLicensesOf(
+	Optional<CspSubscription> alignNumberOfAvailableLicenses() {
+		if (numberOfAvailableLicenses.equals(numberOfAssignedLicenses)) return Optional.empty();
+
+		if (numberOfAssignedLicensesIsLowerThanMinimumAllowedNumberOfAvailableLicenses()
+			&& numberOfAvailableLicenses.equals(minAllowedNumberOfAvailableLicenses)) return Optional.empty();
+
+		if (numberOfAssignedLicensesIsHigherThanMaximumAllowedNumberOfAvailableLicenses()
+			&& numberOfAvailableLicenses.equals(maxAllowedNumberOfAvailableLicenses)) return Optional.empty();
+
+		return Optional.of(withAvailableLicensesOf(
 			new SubscriptionLicenseQuantity(
 				Math.max(
 					minAllowedNumberOfAvailableLicenses.intValue(),
 					Math.min(
 						maxAllowedNumberOfAvailableLicenses.intValue(),
-						numberOfAssignedLicenses.intValue())))
-		);
+						numberOfAssignedLicenses.intValue())
+				)
+			)
+		));
+	}
+
+	private boolean numberOfAssignedLicensesIsLowerThanMinimumAllowedNumberOfAvailableLicenses() {
+		return numberOfAssignedLicenses.intValue() < minAllowedNumberOfAvailableLicenses.intValue();
+	}
+
+	private boolean numberOfAssignedLicensesIsHigherThanMaximumAllowedNumberOfAvailableLicenses() {
+		return numberOfAssignedLicenses.intValue() > maxAllowedNumberOfAvailableLicenses.intValue();
 	}
 
 	private CspSubscription withAvailableLicensesOf(SubscriptionLicenseQuantity quantity) {

@@ -62,7 +62,10 @@ class DeletingLicensedUserTests {
 			.thenReturn(subscriptionCspIdsOf(
 				"c559ba50-e818-436f-bed1-a33abdaed83d",
 				"3c7e5308-b3df-4765-8f48-f4041d41082e",
-				"c0fd7d87-1273-4e9e-b322-6fe89ff42b90"));
+				"c0fd7d87-1273-4e9e-b322-6fe89ff42b90",
+				"72349e5f-2152-4804-876b-7863a1fe0891",
+				"0c4aa532-b5dd-4214-be74-6d13063b0a22",
+				"0bc5db69-43a1-4c4b-8626-5a48c50346dd"));
 
 		when(office365SubscriptionsOperations.getAllFor(aCustomerCspIdOf(A_CUSTOMER_CSP_ID)))
 			.thenReturn(cspSubscriptionsOf(
@@ -80,6 +83,20 @@ class DeletingLicensedUserTests {
 				aCspSubscription()
 					.withId("c0fd7d87-1273-4e9e-b322-6fe89ff42b90")
 					.withAvailableLicenses(2)
+					.withAssignedLicenses(4)
+					.withMaximumAllowedNumberOfAvailableLicenses(3),
+				aCspSubscription()
+					.withId("72349e5f-2152-4804-876b-7863a1fe0891")
+					.withAvailableLicenses(3)
+					.withAssignedLicenses(3),
+				aCspSubscription()
+					.withId("0c4aa532-b5dd-4214-be74-6d13063b0a22")
+					.withAvailableLicenses(1)
+					.withAssignedLicenses(0)
+					.withMinimumAllowedNumberOfAvailableLicenses(1),
+				aCspSubscription()
+					.withId("0bc5db69-43a1-4c4b-8626-5a48c50346dd")
+					.withAvailableLicenses(3)
 					.withAssignedLicenses(4)
 					.withMaximumAllowedNumberOfAvailableLicenses(3)));
 

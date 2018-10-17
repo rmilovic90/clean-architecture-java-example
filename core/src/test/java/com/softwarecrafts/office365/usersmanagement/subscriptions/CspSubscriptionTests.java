@@ -57,7 +57,7 @@ class CspSubscriptionTests {
 	}
 
 	@Test
-	void alignsNumberOfAvailableLicensesToTheNumberOfAssignedLicensesWhenItIsWithinTheAllowedRange() {
+	void alignsTheNumberOfAvailableLicensesToTheNumberOfAssignedLicensesWhenItIsWithinTheAllowedRange() {
 		var cspSubscription = CspSubscriptionBuilder.aCspSubscription()
 			.withAvailableLicenses(3)
 			.withAssignedLicenses(2)
@@ -65,37 +65,78 @@ class CspSubscriptionTests {
 			.withMaximumAllowedNumberOfAvailableLicenses(Integer.MAX_VALUE)
 			.build();
 
-		var cspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
+		var optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
 
-		assertThat(cspSubscriptionWithAlignedNumberOfAvailableLicenses.numberOfAvailableLicenses())
-			.isEqualTo(aSubscriptionLicenseQuantityOf(2));
+		assertThat(optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses).hasValueSatisfying(
+			subscription -> assertThat(subscription.numberOfAvailableLicenses())
+				.isEqualTo(aSubscriptionLicenseQuantityOf(2)));
 	}
 
 	@Test
-	void alignsNumberOfAvailableLicensesToTheMinimumAllowedNumberOfAssignedLicensesWhenTheNumberOfAssignedLicensesIsBellowThatValue() {
+	void alignsTheNumberOfAvailableLicensesToTheMinimumAllowedNumberOfAssignedLicensesWhenTheNumberOfAssignedLicensesIsBellowThatValue() {
 		var cspSubscription = CspSubscriptionBuilder.aCspSubscription()
 			.withAvailableLicenses(3)
 			.withAssignedLicenses(0)
 			.withMinimumAllowedNumberOfAvailableLicenses(1)
 			.build();
 
-		var cspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
+		var optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
 
-		assertThat(cspSubscriptionWithAlignedNumberOfAvailableLicenses.numberOfAvailableLicenses())
-			.isEqualTo(aSubscriptionLicenseQuantityOf(1));
+		assertThat(optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses).hasValueSatisfying(
+			subscription -> assertThat(subscription.numberOfAvailableLicenses())
+				.isEqualTo(aSubscriptionLicenseQuantityOf(1)));
 	}
 
 	@Test
-	void alignsNumberOfAvailableLicensesToTheMaximumAllowedNumberOfAssignedLicensesWhenTheNumberOfAssignedLicensesIsAboveThatValue() {
+	void alignsTheNumberOfAvailableLicensesToTheMaximumAllowedNumberOfAssignedLicensesWhenTheNumberOfAssignedLicensesIsAboveThatValue() {
 		var cspSubscription = CspSubscriptionBuilder.aCspSubscription()
 			.withAvailableLicenses(3)
 			.withAssignedLicenses(11)
 			.withMaximumAllowedNumberOfAvailableLicenses(10)
 			.build();
 
-		var cspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
+		var optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
 
-		assertThat(cspSubscriptionWithAlignedNumberOfAvailableLicenses.numberOfAvailableLicenses())
-			.isEqualTo(aSubscriptionLicenseQuantityOf(10));
+		assertThat(optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses).hasValueSatisfying(
+			subscription -> assertThat(subscription.numberOfAvailableLicenses())
+				.isEqualTo(aSubscriptionLicenseQuantityOf(10)));
+	}
+
+	@Test
+	void doesNotAlignTheNumberOfAvailableLicensesWhenItIsAlreadyAlignedWithTheNumberOfAssignedLicenses() {
+		var cspSubscription = CspSubscriptionBuilder.aCspSubscription()
+			.withAvailableLicenses(3)
+			.withAssignedLicenses(3)
+			.build();
+
+		var optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
+
+		assertThat(optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses).isNotPresent();
+	}
+
+	@Test
+	void doesNotAlignTheNumberOfAvailableLicensesWhenDecreaseIsRequiredAndItAlreadyHasMinimumAllowedValue() {
+		var cspSubscription = CspSubscriptionBuilder.aCspSubscription()
+			.withAvailableLicenses(1)
+			.withAssignedLicenses(0)
+			.withMinimumAllowedNumberOfAvailableLicenses(1)
+			.build();
+
+		var optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
+
+		assertThat(optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses).isNotPresent();
+	}
+
+	@Test
+	void doesNotAlignTheNumberOfAvailableLicensesWhenIncreaseIsRequiredAndItAlreadyHasMaximumAllowedValue() {
+		var cspSubscription = CspSubscriptionBuilder.aCspSubscription()
+			.withAvailableLicenses(10)
+			.withAssignedLicenses(11)
+			.withMaximumAllowedNumberOfAvailableLicenses(10)
+			.build();
+
+		var optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
+
+		assertThat(optionallyCspSubscriptionWithAlignedNumberOfAvailableLicenses).isNotPresent();
 	}
 }

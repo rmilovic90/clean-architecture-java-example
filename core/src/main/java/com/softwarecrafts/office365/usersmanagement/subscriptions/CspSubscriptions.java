@@ -29,6 +29,8 @@ public class CspSubscriptions {
 	public CspSubscriptions withAlignedNumberOfAvailableLicenses() {
 		var itemsWithModifiedNumberOfAssignedLicenses = items.stream()
 			.map(CspSubscription::alignNumberOfAvailableLicenses)
+			.filter(Optional::isPresent)
+			.map(Optional::get)
 			.collect(Collectors.toList());
 
 		return new CspSubscriptions(itemsWithModifiedNumberOfAssignedLicenses);
