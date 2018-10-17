@@ -54,7 +54,7 @@ class DeletingLicensedUserTests {
 	}
 
 	@Test
-	void alignsAvailableAndAssignedQuantitiesOfTheAffectedSubscriptionsWhenCustomerUsesAutomaticLicensingMode() {
+	void alignsAvailableAndAssignedNumberOfLicensesOfTheAffectedSubscriptionsWhenCustomerUsesAutomaticLicensingMode() {
 		when(customersStore.tryFindOneBy(aCustomerNumberOf(A_CUSTOMER_NUMBER)))
 			.thenReturn(aCustomerWith(A_CUSTOMER_CSP_ID, CustomerLicensingMode.AUTOMATIC));
 
@@ -112,6 +112,28 @@ class DeletingLicensedUserTests {
 			.changeSubscriptionQuantity(aCustomerCspIdOf(A_CUSTOMER_CSP_ID),
 				aSubscriptionCspIdOf("c0fd7d87-1273-4e9e-b322-6fe89ff42b90"), aSubscriptionLicenseQuantityOf(3));
 		verifyNoMoreInteractions(office365SubscriptionsOperations);
+	}
+
+	@Test
+	void doesNotChangeTheNumberOfAvailableLicensesOfTheAffectedSubscriptionsWhenCustomerUsesManualLicensingMode() {
+		when(customersStore.tryFindOneBy(aCustomerNumberOf(A_CUSTOMER_NUMBER)))
+			.thenReturn(aCustomerWith(A_CUSTOMER_CSP_ID, CustomerLicensingMode.MANUAL));
+
+		when(office365UsersOperations.getAssignedSubscriptionIdsFor(aCustomerCspIdOf(A_CUSTOMER_CSP_ID), aUserNameOf(A_CUSTOMER_USER)))
+			.thenReturn(subscriptionCspIdsOf("c559ba50-e818-436f-bed1-a33abdaed83d"));
+
+		when(office365SubscriptionsOperations.getAllFor(aCustomerCspIdOf(A_CUSTOMER_CSP_ID)))
+			.thenReturn(cspSubscriptionsOf(
+				aCspSubscription()
+					.withId("7a423c76-e8d9-4818-9e3c-7bc69c7417dd"),
+				aCspSubscription()
+					.withId("c559ba50-e818-436f-bed1-a33abdaed83d")
+					.withAvailableLicenses(3)
+					.withAssignedLicenses(2)));
+
+		usersOperations.deleteUser(deleteUserRequestFor(A_CUSTOMER_NUMBER, A_CUSTOMER_USER));
+
+		verifyZeroInteractions(office365SubscriptionsOperations);
 	}
 
 	private CustomerNumber aCustomerNumberOf(String value) {
