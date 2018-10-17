@@ -40,9 +40,9 @@ class DeletingLicensedUserTests {
 	UsersOperations usersOperations;
 
 	@Test
-	void deletesTheUser() {
+	void deletesTheUserWhenCustomerUsesAutomaticLicensingMode() {
 		when(customersStore.tryFindOneBy(aCustomerNumberOf(A_CUSTOMER_NUMBER)))
-			.thenReturn(aCustomerWith(A_CUSTOMER_CSP_ID));
+			.thenReturn(aCustomerWith(A_CUSTOMER_CSP_ID, CustomerLicensingMode.AUTOMATIC));
 
 		when(office365SubscriptionsOperations.getAllFor(aCustomerCspIdOf(A_CUSTOMER_CSP_ID)))
 			.thenReturn(emptyCspSubscriptions());
@@ -115,21 +115,20 @@ class DeletingLicensedUserTests {
 	}
 
 	@Test
-	void doesNotChangeTheNumberOfAvailableLicensesOfTheAffectedSubscriptionsWhenCustomerUsesManualLicensingMode() {
+	void deletesTheUserWhenCustomerUsesManualLicensingMode() {
 		when(customersStore.tryFindOneBy(aCustomerNumberOf(A_CUSTOMER_NUMBER)))
 			.thenReturn(aCustomerWith(A_CUSTOMER_CSP_ID, CustomerLicensingMode.MANUAL));
 
-		when(office365UsersOperations.getAssignedSubscriptionIdsFor(aCustomerCspIdOf(A_CUSTOMER_CSP_ID), aUserNameOf(A_CUSTOMER_USER)))
-			.thenReturn(subscriptionCspIdsOf("c559ba50-e818-436f-bed1-a33abdaed83d"));
+		usersOperations.deleteUser(deleteUserRequestFor(A_CUSTOMER_NUMBER, A_CUSTOMER_USER));
 
-		when(office365SubscriptionsOperations.getAllFor(aCustomerCspIdOf(A_CUSTOMER_CSP_ID)))
-			.thenReturn(cspSubscriptionsOf(
-				aCspSubscription()
-					.withId("7a423c76-e8d9-4818-9e3c-7bc69c7417dd"),
-				aCspSubscription()
-					.withId("c559ba50-e818-436f-bed1-a33abdaed83d")
-					.withAvailableLicenses(3)
-					.withAssignedLicenses(2)));
+		verify(office365UsersOperations)
+			.deleteOne(aCustomerCspIdOf(A_CUSTOMER_CSP_ID), aUserNameOf(A_CUSTOMER_USER));
+	}
+
+	@Test
+	void doesNotChangeTheNumberOfAvailableLicensesOfTheAffectedSubscriptionsWhenCustomerUsesManualLicensingMode() {
+		when(customersStore.tryFindOneBy(aCustomerNumberOf(A_CUSTOMER_NUMBER)))
+			.thenReturn(aCustomerWith(A_CUSTOMER_CSP_ID, CustomerLicensingMode.MANUAL));
 
 		usersOperations.deleteUser(deleteUserRequestFor(A_CUSTOMER_NUMBER, A_CUSTOMER_USER));
 
@@ -138,13 +137,6 @@ class DeletingLicensedUserTests {
 
 	private CustomerNumber aCustomerNumberOf(String value) {
 		return new CustomerNumber(value);
-	}
-
-	private Optional<Customer> aCustomerWith(String cspId) {
-		return Optional.of(
-			aCustomer()
-				.withCspId(cspId)
-				.build());
 	}
 
 	private CustomerCspId aCustomerCspIdOf(String value) {

@@ -9,6 +9,8 @@ import com.softwarecrafts.office365.usersmanagement.subscriptions.IOperateOnOffi
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static com.softwarecrafts.office365.usersmanagement.customers.CustomerLicensingMode.AUTOMATIC;
+
 public class UsersOperations {
 	private final IStoreCustomers customersStore;
 	private final IOperateOnOffice365Users office365UsersOperations;
@@ -24,17 +26,22 @@ public class UsersOperations {
 	void deleteUser(DeleteUserRequest request) {
 		var customer = customersStore.tryFindOneBy(request.customerNumber());
 		var customersCspId = customer.orElseThrow(customerDoesNotExist(request.customerNumber())).cspId();
+		var customerLicensingMode = customer.orElseThrow(customerDoesNotExist(request.customerNumber())).licensingMode();
 
-		var idsOfTheAffectedSubscriptions = office365UsersOperations.getAssignedSubscriptionIdsFor(
-			customersCspId, request.customersUserName());
+		if (customerLicensingMode == AUTOMATIC) {
+			var idsOfTheAffectedSubscriptions = office365UsersOperations.getAssignedSubscriptionIdsFor(
+				customersCspId, request.customersUserName());
 
-		office365UsersOperations.deleteOne(customersCspId, request.customersUserName());
+			office365UsersOperations.deleteOne(customersCspId, request.customersUserName());
 
-		var customersSubscriptions = office365SubscriptionsOperations.getAllFor(customersCspId);
+			var customersSubscriptions = office365SubscriptionsOperations.getAllFor(customersCspId);
 
-		customersSubscriptions.onlyWithIdsOf(idsOfTheAffectedSubscriptions)
-			.withAlignedNumberOfAvailableLicenses()
-			.items().forEach(changeSubscriptionQuantityFor(customersCspId));
+			customersSubscriptions.onlyWithIdsOf(idsOfTheAffectedSubscriptions)
+				.withAlignedNumberOfAvailableLicenses()
+				.items().forEach(changeSubscriptionQuantityFor(customersCspId));
+		} else {
+			office365UsersOperations.deleteOne(customersCspId, request.customersUserName());
+		}
 	}
 
 	private Supplier<IllegalStateException> customerDoesNotExist(CustomerNumber customerNumber) {
@@ -46,4 +53,3 @@ public class UsersOperations {
 			customerId, subscription.id(), subscription.numberOfAvailableLicenses());
 	}
 }
-

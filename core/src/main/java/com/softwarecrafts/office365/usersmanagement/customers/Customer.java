@@ -22,6 +22,10 @@ public class Customer {
 		return cspId;
 	}
 
+	public CustomerLicensingMode licensingMode() {
+		return  licensingMode;
+	}
+
 	@Override
 	public String toString() {
 		return "Customer {" +
