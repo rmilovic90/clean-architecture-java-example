@@ -12,8 +12,8 @@ public final class CspSubscriptionBuilder {
 	private SubscriptionCspId id = new SubscriptionCspId("3338777d-3bc6-4eda-82a4-e02fef75ecbd");
 	private SubscriptionLicenseQuantity numberOfAvailableLicenses = new SubscriptionLicenseQuantity(1);
 	private SubscriptionLicenseQuantity numberOfAssignedLicenses = new SubscriptionLicenseQuantity(1);
-	private final SubscriptionLicenseQuantity minAllowedNumberOfAvailableLicenses = new SubscriptionLicenseQuantity(1);
-	private final SubscriptionLicenseQuantity maxAllowedNumberOfAvailableLicenses = new SubscriptionLicenseQuantity(Integer.MAX_VALUE);
+	private SubscriptionLicenseQuantity minAllowedNumberOfAvailableLicenses = new SubscriptionLicenseQuantity(1);
+	private SubscriptionLicenseQuantity maxAllowedNumberOfAvailableLicenses = new SubscriptionLicenseQuantity(Integer.MAX_VALUE);
 
 	private CspSubscriptionBuilder() {}
 
@@ -35,7 +35,19 @@ public final class CspSubscriptionBuilder {
 		return this;
 	}
 
-	CspSubscription build() {
+	public CspSubscriptionBuilder withMinimumAllowedNumberOfAvailableLicenses(int quantity) {
+		minAllowedNumberOfAvailableLicenses = new SubscriptionLicenseQuantity(quantity);
+
+		return this;
+	}
+
+	public CspSubscriptionBuilder withMaximumAllowedNumberOfAvailableLicenses(int quantity) {
+		maxAllowedNumberOfAvailableLicenses = new SubscriptionLicenseQuantity(quantity);
+
+		return this;
+	}
+
+	public CspSubscription build() {
 		return new CspSubscription(id, numberOfAvailableLicenses, numberOfAssignedLicenses,
 			minAllowedNumberOfAvailableLicenses, maxAllowedNumberOfAvailableLicenses);
 	}

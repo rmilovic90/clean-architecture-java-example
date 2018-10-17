@@ -1,7 +1,6 @@
 package com.softwarecrafts.office365.usersmanagement.subscriptions;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CspSubscriptions {
@@ -27,9 +26,9 @@ public class CspSubscriptions {
 		return new CspSubscriptions(filteredItems);
 	}
 
-	public CspSubscriptions modifyNumberOfAvailableLicensesUsing(Function<CspSubscription, SubscriptionLicenseQuantity> modifier) {
+	public CspSubscriptions withAlignedNumberOfAvailableLicenses() {
 		var itemsWithModifiedNumberOfAssignedLicenses = items.stream()
-			.map(item -> item.withAvailableLicensesOf(modifier.apply(item)))
+			.map(CspSubscription::alignNumberOfAvailableLicenses)
 			.collect(Collectors.toList());
 
 		return new CspSubscriptions(itemsWithModifiedNumberOfAssignedLicenses);

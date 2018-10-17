@@ -1,5 +1,6 @@
 package com.softwarecrafts.office365.usersmanagement.subscriptions;
 
+import com.softwarecrafts.office365.usersmanagement.common.CspSubscriptionBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -56,15 +57,45 @@ class CspSubscriptionTests {
 	}
 
 	@Test
-	void createsANewCspSubscriptionWithASpecifiedNumberOfAvailableLicenses() {
-		var cspSubscription = new CspSubscription(aSubscriptionCspIdOf("cb1c2347-7811-4c9e-871f-62c18c1cc22d"),
-			aSubscriptionLicenseQuantityOf(1), aSubscriptionLicenseQuantityOf(1),
-			aSubscriptionLicenseQuantityOf(1), aSubscriptionLicenseQuantityOf(Integer.MAX_VALUE));
+	void alignsNumberOfAvailableLicensesToTheNumberOfAssignedLicensesWhenItIsWithinTheAllowedRange() {
+		var cspSubscription = CspSubscriptionBuilder.aCspSubscription()
+			.withAvailableLicenses(3)
+			.withAssignedLicenses(2)
+			.withMinimumAllowedNumberOfAvailableLicenses(1)
+			.withMaximumAllowedNumberOfAvailableLicenses(Integer.MAX_VALUE)
+			.build();
 
-		var cspSubscriptionWithANewNumberOfAvailableLicenses = cspSubscription.withAvailableLicensesOf(
-			aSubscriptionLicenseQuantityOf(3));
+		var cspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
 
-		assertThat(cspSubscriptionWithANewNumberOfAvailableLicenses.numberOfAvailableLicenses())
-			.isEqualTo(aSubscriptionLicenseQuantityOf(3));
+		assertThat(cspSubscriptionWithAlignedNumberOfAvailableLicenses.numberOfAvailableLicenses())
+			.isEqualTo(aSubscriptionLicenseQuantityOf(2));
+	}
+
+	@Test
+	void alignsNumberOfAvailableLicensesToTheMinimumAllowedNumberOfAssignedLicensesWhenTheNumberOfAssignedLicensesIsBellowThatValue() {
+		var cspSubscription = CspSubscriptionBuilder.aCspSubscription()
+			.withAvailableLicenses(3)
+			.withAssignedLicenses(0)
+			.withMinimumAllowedNumberOfAvailableLicenses(1)
+			.build();
+
+		var cspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
+
+		assertThat(cspSubscriptionWithAlignedNumberOfAvailableLicenses.numberOfAvailableLicenses())
+			.isEqualTo(aSubscriptionLicenseQuantityOf(1));
+	}
+
+	@Test
+	void alignsNumberOfAvailableLicensesToTheMaximumAllowedNumberOfAssignedLicensesWhenTheNumberOfAssignedLicensesIsAboveThatValue() {
+		var cspSubscription = CspSubscriptionBuilder.aCspSubscription()
+			.withAvailableLicenses(3)
+			.withAssignedLicenses(11)
+			.withMaximumAllowedNumberOfAvailableLicenses(10)
+			.build();
+
+		var cspSubscriptionWithAlignedNumberOfAvailableLicenses = cspSubscription.alignNumberOfAvailableLicenses();
+
+		assertThat(cspSubscriptionWithAlignedNumberOfAvailableLicenses.numberOfAvailableLicenses())
+			.isEqualTo(aSubscriptionLicenseQuantityOf(10));
 	}
 }

@@ -9,8 +9,8 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 @Tag("Unit-Test")
 class SubscriptionLicenseQuantityTests {
 	@Test
-	void cannotHaveValueLessThanOne() {
-		var thrown = catchThrowable(() -> new SubscriptionLicenseQuantity(0));
+	void cannotHaveValueLessThanZero() {
+		var thrown = catchThrowable(() -> new SubscriptionLicenseQuantity(-1));
 
 		assertThat(thrown).isInstanceOf(IllegalArgumentException.class);
 	}

@@ -8,10 +8,14 @@ public class SubscriptionLicenseQuantity extends ValueObject<SubscriptionLicense
 	private final int value;
 
 	public SubscriptionLicenseQuantity(int value) {
-		if (value < 1)
-			throw new IllegalArgumentException("Subscription license quantity value can't be less than 1.");
+		if (value < 0)
+			throw new IllegalArgumentException("Subscription license quantity value can't be less than 0.");
 
 		this.value = value;
+	}
+
+	int intValue() {
+		return value;
 	}
 
 	@Override

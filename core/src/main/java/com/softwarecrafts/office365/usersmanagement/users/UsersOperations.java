@@ -5,10 +5,8 @@ import com.softwarecrafts.office365.usersmanagement.customers.CustomerNumber;
 import com.softwarecrafts.office365.usersmanagement.customers.IStoreCustomers;
 import com.softwarecrafts.office365.usersmanagement.subscriptions.CspSubscription;
 import com.softwarecrafts.office365.usersmanagement.subscriptions.IOperateOnOffice365Subscriptions;
-import com.softwarecrafts.office365.usersmanagement.subscriptions.SubscriptionLicenseQuantity;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class UsersOperations {
@@ -35,7 +33,7 @@ public class UsersOperations {
 		var customersSubscriptions = office365SubscriptionsOperations.getAllFor(customersCspId);
 
 		customersSubscriptions.onlyWithIdsOf(idsOfTheAffectedSubscriptions)
-			.modifyNumberOfAvailableLicensesUsing(alignmentWithAssignedLicenses())
+			.withAlignedNumberOfAvailableLicenses()
 			.items().forEach(changeSubscriptionQuantityFor(customersCspId));
 	}
 
@@ -43,12 +41,9 @@ public class UsersOperations {
 		return () -> new IllegalStateException(String.format("Customer with number %s does not exist.", customerNumber));
 	}
 
-	private Function<CspSubscription, SubscriptionLicenseQuantity> alignmentWithAssignedLicenses() {
-		return CspSubscription::numberOfAssignedLicenses;
-	}
-
 	private Consumer<CspSubscription> changeSubscriptionQuantityFor(CustomerCspId customerId) {
 		return subscription -> office365SubscriptionsOperations.changeSubscriptionQuantity(
 			customerId, subscription.id(), subscription.numberOfAvailableLicenses());
 	}
 }
+
