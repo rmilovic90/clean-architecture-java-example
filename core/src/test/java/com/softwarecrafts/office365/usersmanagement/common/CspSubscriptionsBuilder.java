@@ -15,4 +15,6 @@ public final class CspSubscriptionsBuilder {
 		return new CspSubscriptions(Arrays.stream(cspSubscriptions).map(CspSubscriptionBuilder::build)
 			.collect(Collectors.toList()));
 	}
+
+	private CspSubscriptionsBuilder() {}
 }

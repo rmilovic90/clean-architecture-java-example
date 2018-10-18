@@ -15,4 +15,6 @@ public final class SubscriptionCspIdBuilder {
 	public static SubscriptionCspId aSubscriptionCspIdOf(String value) {
 		return new SubscriptionCspId(value);
 	}
+
+	private SubscriptionCspIdBuilder() {}
 }

@@ -1,15 +1,10 @@
 package com.softwarecrafts.office365.usersmanagement.users;
 
-import com.softwarecrafts.office365.usersmanagement.customers.CustomerCspId;
 import com.softwarecrafts.office365.usersmanagement.customers.CustomerNumber;
 import com.softwarecrafts.office365.usersmanagement.customers.IStoreCustomers;
-import com.softwarecrafts.office365.usersmanagement.subscriptions.CspSubscription;
 import com.softwarecrafts.office365.usersmanagement.subscriptions.IOperateOnOffice365Subscriptions;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import static com.softwarecrafts.office365.usersmanagement.customers.CustomerLicensingMode.AUTOMATIC;
 
 public class UsersOperations {
 	private final IStoreCustomers customersStore;
@@ -28,28 +23,11 @@ public class UsersOperations {
 		var customersCspId = customer.orElseThrow(customerDoesNotExist(request.customerNumber())).cspId();
 		var customerLicensingMode = customer.orElseThrow(customerDoesNotExist(request.customerNumber())).licensingMode();
 
-		if (customerLicensingMode == AUTOMATIC) {
-			var idsOfTheAffectedSubscriptions = office365UsersOperations.getAssignedSubscriptionIdsFor(
-				customersCspId, request.customersUserName());
-
-			office365UsersOperations.deleteOne(customersCspId, request.customersUserName());
-
-			var customersSubscriptions = office365SubscriptionsOperations.getAllFor(customersCspId);
-
-			customersSubscriptions.onlyWithIdsOf(idsOfTheAffectedSubscriptions)
-				.withAlignedNumberOfAvailableLicenses()
-				.items().forEach(changeSubscriptionQuantityFor(customersCspId));
-		} else {
-			office365UsersOperations.deleteOne(customersCspId, request.customersUserName());
-		}
+		var deleteLicensedUser = new DeleteLicensedUserService(office365UsersOperations, office365SubscriptionsOperations, customerLicensingMode);
+		deleteLicensedUser.delete(customersCspId, request.customersUserName());
 	}
 
 	private Supplier<IllegalStateException> customerDoesNotExist(CustomerNumber customerNumber) {
 		return () -> new IllegalStateException(String.format("Customer with number %s does not exist.", customerNumber));
-	}
-
-	private Consumer<CspSubscription> changeSubscriptionQuantityFor(CustomerCspId customerId) {
-		return subscription -> office365SubscriptionsOperations.changeSubscriptionQuantity(
-			customerId, subscription.id(), subscription.numberOfAvailableLicenses());
 	}
 }

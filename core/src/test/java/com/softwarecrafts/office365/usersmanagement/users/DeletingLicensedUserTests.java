@@ -18,6 +18,8 @@ import static com.softwarecrafts.office365.usersmanagement.common.SubscriptionCs
 import static com.softwarecrafts.office365.usersmanagement.common.SubscriptionCspIdBuilder.subscriptionCspIdsOf;
 import static com.softwarecrafts.office365.usersmanagement.common.SubscriptionLicenseQuantityBuilder.aSubscriptionLicenseQuantityOf;
 import static com.softwarecrafts.office365.usersmanagement.users.CustomerBuilder.aCustomer;
+import static com.softwarecrafts.office365.usersmanagement.users.CustomerCspIdBuilder.aCustomerCspIdOf;
+import static com.softwarecrafts.office365.usersmanagement.users.UserNameBuilder.aUserNameOf;
 import static org.mockito.Mockito.*;
 
 @Tag("Acceptance-Test")
@@ -139,23 +141,16 @@ class DeletingLicensedUserTests {
 		return new CustomerNumber(value);
 	}
 
-	private CustomerCspId aCustomerCspIdOf(String value) {
-		return new CustomerCspId(value);
-	}
-
-	private DeleteUserRequest deleteUserRequestFor(String customerNumber, String customersUser) {
-		return new DeleteUserRequest(new CustomerNumber(customerNumber), new UserName(customersUser));
-	}
-
-	private UserName aUserNameOf(String value) {
-		return new UserName(value);
-	}
-
 	private Optional<Customer> aCustomerWith(String cspId, CustomerLicensingMode licensingMode) {
 		return Optional.of(
 			aCustomer()
 				.withCspId(cspId)
 				.withLicensingMode(licensingMode)
 				.build());
+
+	}
+
+	private DeleteUserRequest deleteUserRequestFor(String customerNumber, String customersUser) {
+		return new DeleteUserRequest(new CustomerNumber(customerNumber), new UserName(customersUser));
 	}
 }

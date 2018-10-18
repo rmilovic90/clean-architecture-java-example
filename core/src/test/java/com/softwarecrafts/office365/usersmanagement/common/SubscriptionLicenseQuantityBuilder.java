@@ -6,4 +6,6 @@ public final class SubscriptionLicenseQuantityBuilder {
 	public static SubscriptionLicenseQuantity aSubscriptionLicenseQuantityOf(int value) {
 		return new SubscriptionLicenseQuantity(value);
 	}
+
+	private SubscriptionLicenseQuantityBuilder() {}
 }
