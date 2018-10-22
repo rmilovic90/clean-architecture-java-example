@@ -1,5 +1,6 @@
 package com.softwarecrafts.office365.usersmanagement.users;
 
+import com.softwarecrafts.office365.usersmanagement.customers.CustomerNotFoundException;
 import com.softwarecrafts.office365.usersmanagement.customers.CustomerNumber;
 import com.softwarecrafts.office365.usersmanagement.customers.IStoreCustomers;
 import com.softwarecrafts.office365.usersmanagement.subscriptions.IOperateOnOffice365Subscriptions;
@@ -27,7 +28,7 @@ public class UsersOperations implements IOperateOnUsers {
 		deleteLicensedUser.delete(customersCspId, request.customersUserName());
 	}
 
-	private Supplier<IllegalStateException> customerDoesNotExist(CustomerNumber customerNumber) {
-		return () -> new IllegalStateException(String.format("Customer with number %s does not exist.", customerNumber));
+	private Supplier<CustomerNotFoundException> customerDoesNotExist(CustomerNumber customerNumber) {
+		return () -> new CustomerNotFoundException(customerNumber);
 	}
 }

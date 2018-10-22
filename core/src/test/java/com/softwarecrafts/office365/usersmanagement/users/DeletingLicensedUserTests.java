@@ -20,6 +20,8 @@ import static com.softwarecrafts.office365.usersmanagement.common.SubscriptionLi
 import static com.softwarecrafts.office365.usersmanagement.users.CustomerBuilder.aCustomer;
 import static com.softwarecrafts.office365.usersmanagement.users.CustomerCspIdBuilder.aCustomerCspIdOf;
 import static com.softwarecrafts.office365.usersmanagement.users.UserNameBuilder.aUserNameOf;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.Mockito.*;
 
 @Tag("Acceptance-Test")
@@ -40,6 +42,28 @@ class DeletingLicensedUserTests {
 
 	@InjectMocks
 	UsersOperations usersOperations;
+
+	@Test
+	void throwsErrorWhenCustomerIsNotFound() {
+		when(customersStore.tryFindOneBy(aCustomerNumberOf(A_CUSTOMER_NUMBER)))
+			.thenReturn(noCustomer());
+
+		var thrown = catchThrowable(() -> usersOperations.deleteUser(deleteUserRequestFor(A_CUSTOMER_NUMBER, A_CUSTOMER_USER)));
+
+		assertThat(thrown).isInstanceOf(CustomerNotFoundException.class);
+	}
+
+	@Test
+	@SuppressWarnings("ThrowableNotThrown")
+	void doesNotDeleteUserOrAlignTheNumberOfAvailableLicensesOfTheAffectedSubscriptionsWhenCustomerIsNotFound() {
+		when(customersStore.tryFindOneBy(aCustomerNumberOf(A_CUSTOMER_NUMBER)))
+			.thenReturn(noCustomer());
+
+		catchThrowable(() -> usersOperations.deleteUser(deleteUserRequestFor(A_CUSTOMER_NUMBER, A_CUSTOMER_USER)));
+
+		verifyZeroInteractions(office365UsersOperations);
+		verifyZeroInteractions(office365SubscriptionsOperations);
+	}
 
 	@Test
 	void deletesTheUserWhenCustomerUsesAutomaticLicensingMode() {
@@ -139,6 +163,10 @@ class DeletingLicensedUserTests {
 
 	private CustomerNumber aCustomerNumberOf(String value) {
 		return new CustomerNumber(value);
+	}
+
+	private Optional<Customer> noCustomer() {
+		return Optional.empty();
 	}
 
 	private Optional<Customer> aCustomerWith(String cspId, CustomerLicensingMode licensingMode) {
