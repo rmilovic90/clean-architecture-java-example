@@ -18,13 +18,15 @@
 
 	<groupId>com.softwarecrafts.office365</groupId>
 	<artifactId>users-management</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>${revision}</version>
 	<packaging>pom</packaging>
 
 	<name>Office365 Users Management</name>
 	<description>Example of Clean Architecture implementation done in Java.</description>
 
 	<properties>
+		<revision>0.1.0-SNAPSHOT</revision>
+
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
