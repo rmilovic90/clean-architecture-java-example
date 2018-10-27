@@ -13,6 +13,7 @@
 
 	<modules>
 		<module>core</module>
+		<module>infrastructure</module>
 	</modules>
 
 	<groupId>com.softwarecrafts.office365</groupId>
