@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Tag("Unit-Test")
 class UserNameTests {
@@ -46,9 +45,9 @@ class UserNameTests {
 
 	private static Stream<Arguments> equalValuesProvider() {
 		return Stream.of(
-			arguments("testuser@testcustomer.onmicrosoft.com", "testuser@testcustomer.onmicrosoft.com"),
-			arguments("TESTUSER@TESTCUSTOMER.ONMICROSOFT.COM", "TESTUSER@TESTCUSTOMER.ONMICROSOFT.COM"),
-			arguments("testuser@testcustomer.onmicrosoft.com", "TESTUSER@TESTCUSTOMER.ONMICROSOFT.COM")
+			Arguments.of("testuser@testcustomer.onmicrosoft.com", "testuser@testcustomer.onmicrosoft.com"),
+			Arguments.of("TESTUSER@TESTCUSTOMER.ONMICROSOFT.COM", "TESTUSER@TESTCUSTOMER.ONMICROSOFT.COM"),
+			Arguments.of("testuser@testcustomer.onmicrosoft.com", "TESTUSER@TESTCUSTOMER.ONMICROSOFT.COM")
 		);
 	}
 

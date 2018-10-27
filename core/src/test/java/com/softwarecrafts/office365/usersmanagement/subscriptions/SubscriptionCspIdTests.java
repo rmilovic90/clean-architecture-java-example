@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Tag("Unit-Test")
 class SubscriptionCspIdTests {
@@ -46,9 +45,9 @@ class SubscriptionCspIdTests {
 
 	private static Stream<Arguments> equalValuesProvider() {
 		return Stream.of(
-			arguments("7b22f4db-edb1-4a34-8944-194df8c6f1fe", "7b22f4db-edb1-4a34-8944-194df8c6f1fe"),
-			arguments("7B22F4DB-EDB1-4A34-8944-194DF8C6F1FE", "7B22F4DB-EDB1-4A34-8944-194DF8C6F1FE"),
-			arguments("7b22f4db-edb1-4a34-8944-194df8c6f1fe", "7B22F4DB-EDB1-4A34-8944-194DF8C6F1FE")
+			Arguments.of("7b22f4db-edb1-4a34-8944-194df8c6f1fe", "7b22f4db-edb1-4a34-8944-194df8c6f1fe"),
+			Arguments.of("7B22F4DB-EDB1-4A34-8944-194DF8C6F1FE", "7B22F4DB-EDB1-4A34-8944-194DF8C6F1FE"),
+			Arguments.of("7b22f4db-edb1-4a34-8944-194df8c6f1fe", "7B22F4DB-EDB1-4A34-8944-194DF8C6F1FE")
 		);
 	}
 
